@@ -112,6 +112,7 @@ Create a local `.env` from `.env.example` and fill in the MariaDB credentials. T
 cp .env.example .env
 # then edit `.env` and set:
 # MYSQL_ROOT_PASSWORD
+# MYSQL_ROOT_HOST (optional - default `%` to allow root from any host)
 # (optional) MARIADB_DATABASE
 ```
 
