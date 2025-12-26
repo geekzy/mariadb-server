@@ -44,9 +44,9 @@ The stack is defined in `docker-compose.yml`.
 
 Credentials are read from environment variables (see `.env.example`):
 
-- **Root Username:** `MONGO_INITDB_ROOT_USERNAME` (default: `root`)
-- **Root Password:** `MONGO_INITDB_ROOT_PASSWORD` (set in your local `.env`)
-- **Auth Database:** `admin`
+* **Root Username:** `MONGO_INITDB_ROOT_USERNAME` (default: `root`)
+* **Root Password:** `MONGO_INITDB_ROOT_PASSWORD` (set in your local `.env`)
+* **Auth Database:** `admin`
 
 ### Data Persistence
 
@@ -125,7 +125,7 @@ docker compose up -d
 make up
 ```
 
-Admin UI (mongo-express) will be available at http://localhost:8081 and MongoDB at port 27017.
+Admin UI (mongo-express) will be available at [http://localhost:8081](http://localhost:8081) and MongoDB at port 27017.
 
 Connection strings (replace with values from your `.env`):
 
