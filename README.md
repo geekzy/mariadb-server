@@ -106,13 +106,13 @@ defer db.Close()
 
 ## 🔐 Environment
 
-Create a local `.env` from `.env.example` and fill in the MongoDB credentials. The `.env` file is ignored by Git.
+Create a local `.env` from `.env.example` and fill in the MariaDB credentials. The `.env` file is ignored by Git.
 
 ```bash
 cp .env.example .env
-# then edit .env and set:
-# MONGO_INITDB_ROOT_USERNAME
-# MONGO_INITDB_ROOT_PASSWORD
+# then edit `.env` and set:
+# MYSQL_ROOT_PASSWORD
+# (optional) MARIADB_DATABASE
 ```
 
 Run the stack using Docker Compose or the provided Makefile:
