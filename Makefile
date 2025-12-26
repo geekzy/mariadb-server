@@ -4,9 +4,9 @@
 
 # Start all services in the background
 up:
-	@echo "🚀 Starting MongoDB stack..."
+	@echo "🚀 Starting MariaDB stack..."
 	docker-compose up -d
-	@echo "✅ MongoDB: mongodb://localhost:27017"
+	@echo "✅ MariaDB: root@localhost:3306"
 	@echo "✅ GUI:     http://localhost:8081"
 
 # Stop containers
@@ -17,14 +17,14 @@ down:
 # Restart services
 restart: down up
 
-# View logs for MongoDB only
+# View logs for MariaDB only
 logs:
-	docker-compose logs -f mongodb
+	docker-compose logs -f mariadb
 
-# Enter the MongoDB Shell (mongosh)
+# Enter the MariaDB shell (mysql client)
 shell:
-	@echo "🔌 Connecting to Mongo Shell..."
-	docker-compose exec mongodb mongosh -u root -p passw0rd --authenticationDatabase admin
+	@echo "🔌 Connecting to mysql client..."
+	docker-compose exec mariadb mysql -u root -ppassw0rd
 
 # Remove containers AND volumes (Fresh start)
 clean:
