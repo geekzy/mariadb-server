@@ -1,6 +1,6 @@
-# MongoDB Local Development Environment
+# MariaDB Local Development Environment
 
-This repository provides a containerized MongoDB setup using **Docker Compose**. It includes the official MongoDB Community Edition image and **Mongo Express** for a lightweight web-based administration interface.
+This repository provides a containerized MariaDB setup using **Docker Compose**. It includes the official MariaDB Community Edition image and **phpMyAdmin** for a lightweight web-based administration interface.
 
 ## 📋 Prerequisites
 
@@ -20,8 +20,8 @@ make up
 
 Once running:
 
-* **MongoDB Port:** `27017`
-* **Admin UI:** [http://localhost:8081](https://www.google.com/search?q=http://localhost:8081)
+* **MariaDB Port:** `3306`
+* **Admin UI:** [http://localhost:8081](http://localhost:8081)
 
 ## 🛠 Command Reference
 
@@ -29,11 +29,11 @@ We use a `Makefile` to simplify common Docker operations.
 
 | Command | Description |
 | --- | --- |
-| `make up` | Starts MongoDB and Mongo Express in the background. |
+| `make up` | Starts MariaDB and phpMyAdmin in the background. |
 | `make down` | Stops and removes the running containers. |
 | `make restart` | Restarts the containers (useful for reloading config). |
-| `make logs` | Tails the logs for the MongoDB container only. |
-| `make shell` | Connects directly to the `mongosh` CLI inside the container. |
+| `make logs` | Tails the logs for the MariaDB container only. |
+| `make shell` | Connects directly to the `mysql` CLI inside the container. |
 | `make clean` | **WARNING:** Stops containers and **deletes** the persistent data volume. |
 
 ## ⚙️ Configuration Details
@@ -44,13 +44,11 @@ The stack is defined in `docker-compose.yml`.
 
 Credentials are read from environment variables (see `.env.example`):
 
-* **Root Username:** `MONGO_INITDB_ROOT_USERNAME` (default: `root`)
-* **Root Password:** `MONGO_INITDB_ROOT_PASSWORD` (set in your local `.env`)
-* **Auth Database:** `admin`
+* **Root Password:** `MYSQL_ROOT_PASSWORD` (set in your local `.env`)
 
 ### Data Persistence
 
-Data is persisted using a named Docker volume (`mongodb_data`).
+Data is persisted using a named Docker volume (`mariadb_data`).
 
 * Running `make down` **preserves** your data.
 * Running `make clean` **deletes** your data.
@@ -62,7 +60,7 @@ Data is persisted using a named Docker volume (`mongodb_data`).
 Use this connection string for your local **Golang** or **Node.js** applications:
 
 ```text
-mongodb://<username>:<password>@localhost:27017/?authSource=admin
+root:passw0rd@tcp(localhost:3306)/
 
 Replace `<username>` and `<password>` with the values from your `.env` file (or use the example in `.env.example`).
 
@@ -73,7 +71,7 @@ Replace `<username>` and `<password>` with the values from your `.env` file (or 
 If your application is running inside another Docker container on the same network (`app-network`), use the service name:
 
 ```text
-mongodb://<username>:<password>@mongodb:27017/?authSource=admin
+root:passw0rd@tcp(mariadb:3306)/
 
 Replace `<username>` and `<password>` with the values from your `.env` file (or use the example in `.env.example`).
 
@@ -91,30 +89,31 @@ Replace `<username>` and `<password>` with the values from your `.env` file (or 
 
 ## 📝 Integration Notes for Golang
 
-Example `mongo-driver` configuration:
+Example MySQL/MariaDB configuration using `database/sql` with `github.com/go-sql-driver/mysql`:
 
 ```go
-ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-defer cancel()
+import (
+    "database/sql"
+    _ "github.com/go-sql-driver/mysql"
+)
 
-// DSN for local development
-uri := "mongodb://root:passw0rd@localhost:27017/?authSource=admin"
-
-client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+db, err := sql.Open("mysql", "root:passw0rd@tcp(localhost:3306)/")
 if err != nil {
     log.Fatal(err)
 }
+defer db.Close()
 ```
 
 ## 🔐 Environment
 
-Create a local `.env` from `.env.example` and fill in the MongoDB credentials. The `.env` file is ignored by Git.
+Create a local `.env` from `.env.example` and fill in the MariaDB credentials. The `.env` file is ignored by Git.
 
 ```bash
 cp .env.example .env
-# then edit .env and set:
-# MONGO_INITDB_ROOT_USERNAME
-# MONGO_INITDB_ROOT_PASSWORD
+# then edit `.env` and set:
+# MYSQL_ROOT_PASSWORD
+# MYSQL_ROOT_HOST (optional - default `%` to allow root from any host)
+# (optional) MARIADB_DATABASE
 ```
 
 Run the stack using Docker Compose or the provided Makefile:
@@ -125,15 +124,15 @@ docker compose up -d
 make up
 ```
 
-Admin UI (mongo-express) will be available at [http://localhost:8081](http://localhost:8081) and MongoDB at port 27017.
+Admin UI (phpMyAdmin) will be available at [http://localhost:8081](http://localhost:8081) and MariaDB at port 3306.
 
 Connection strings (replace with values from your `.env`):
 
 ```text
-mongodb://<username>:<password>@localhost:27017/?authSource=admin
+root:passw0rd@tcp(localhost:3306)/
 
 # From inside the Docker network
-mongodb://<username>:<password>@mongodb:27017/?authSource=admin
+root:passw0rd@tcp(mariadb:3306)/
 ```
 
 If you want Docker Compose to render the effective configuration (helpful to verify env substitution):
